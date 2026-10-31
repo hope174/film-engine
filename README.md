@@ -4,7 +4,7 @@ Turns plain-text scripts into audio films: Edge TTS neural voices (or Windows SA
 characters, plus sound effects, looping music and ambience, voice effects and positional audio.
 
 The person making films should start with `Read me first.txt`, `Syntax.txt` and `Script guide.txt`,
-and use the `.bat` files. AI agents making films follow `AGENTS.md` (`CLAUDE.md` imports it).
+and use `Film Maker.bat` (the window) or the other `.bat` files. AI agents making films follow `AGENTS.md` (`CLAUDE.md` imports it).
 This file is for whoever maintains the engine.
 
 ## Setup
@@ -12,6 +12,19 @@ This file is for whoever maintains the engine.
 `Setup.bat` installs Python 3.12 (via winget, if missing), the packages in `requirements.txt`,
 and ffmpeg. ffmpeg is optional: without it, MP3 output falls back to WAV and only
 wav/mp3/flac/ogg can be read (via miniaudio).
+
+## Film Maker (the window)
+
+`filmengine/app.py` is a wxPython window: a film list, a script editor, a messages box, and menus
+for inserting characters, lines, sounds, pauses, stops and scenes, plus make, check and play.
+It is built for screen reader users. It only uses native controls (ListBox, TextCtrl, Choice and the
+standard dialogs), puts a mnemonic label before every control, gives every action a menu item and
+a shortcut, and reports results in dialogs. Making a film runs on a worker thread, and its
+progress goes to the messages box through `wx.CallAfter`. When a check fails, the cursor moves to
+the first problem line. Launch it with `Film Maker.bat`, which uses pythonw.
+
+`filmengine/films.py` has the operations the app and the command line share: find, create,
+check and make a film, and make a voice sample.
 
 ## Command line
 
@@ -56,6 +69,7 @@ Built-in procedural sounds are in `builtin_sounds.py`.
 
 ## Git
 
-Scripts, sounds and recordings are tracked. `.cache/` and `films/*/output/` are ignored, since
-renders are reproducible and large. `Save my work.bat` runs `git add -A` and a dated commit.
-There is no remote yet; add one for an off-machine backup.
+`films/` is ignored: the repository is public and the films are private, so they stay on this
+computer and in OneDrive. `examples/the-lighthouse` is a tracked example film. `.cache/`, every
+`output/` folder and every `lines.txt` are ignored, since they can be made again. `Save my work.bat` runs `git add -A` and a dated commit.
+The remote is https://github.com/hope174/film-engine (public).

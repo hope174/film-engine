@@ -12,7 +12,34 @@ Double-click Setup.bat and wait until it says "All done". You only need to do
 this once on each computer.
 
 
-MAKING A FILM, STEP BY STEP
+THE EASY WAY: FILM MAKER
+
+Double-click Film Maker.bat. A window opens where you can do everything:
+write the script, add characters, lines and sounds, make the film and listen to it.
+It works with screen readers such as NVDA and JAWS.
+
+The window has three parts. Press Tab to move between them, or use these keys:
+Alt L goes to the film list. Arrow up and down to pick a film, and its script opens.
+Alt S goes to the script, where you can read and type.
+Alt G goes to the messages, which say what has happened.
+
+The keys you will use most:
+Control N starts a new film.
+Control K adds a character to the cast and lets you choose and hear their voice.
+Control L adds a spoken line. Control B adds a sound or music.
+Control P adds a pause. Control T stops sounds. Control E marks a new scene.
+Control S saves the script.
+F7 checks the script for mistakes. If there is one, it tells you, and takes you to that line.
+F5 makes the film. When it is ready, it asks if you want to listen.
+F9 plays the finished film.
+Control F finds words. Control G goes to a line number.
+F1 opens the syntax examples. The Help menu lists every shortcut.
+
+New lines are added below the line you are on, so move to the right place first.
+All of these are also in the menus at the top. Press Alt to reach them.
+
+
+MAKING A FILM WITHOUT THE WINDOW
 
 1. Double-click New film.bat and type a name for your film, such as the haunted house.
    A new folder is made inside the films folder, and its script opens in Notepad.
@@ -22,8 +49,6 @@ MAKING A FILM, STEP BY STEP
 3. Double-click Make a film.bat and type the film's folder name, such as the-haunted-house.
    The engine reads the script, makes the voices and mixes everything together.
 4. When it says "Done", type y and press Enter to listen to it.
-5. When you are happy, double-click Save my work.bat. That keeps a copy of your
-   work in the history, so nothing is lost even if a file is changed or deleted by mistake.
 
 The finished film is saved in your film's folder, inside a folder called output.
 Next to it is a timeline file that lists what happens at each minute and second.
@@ -36,7 +61,9 @@ List voices.bat shows all the voices you can give your characters, in Notepad.
 Try a voice.bat lets you hear a voice saying anything you like, in any style.
 List sounds.bat lists the sounds you can use without any sound files, such as rain and thunder.
 List words.bat shows every word you can put in brackets, such as whisper, echo or behind, in Notepad.
-Save my work.bat saves a copy of everything in the history.
+Save my work.bat saves changes to the engine and the shared sounds folder in the history.
+Your films are not part of that history. They stay private, on this computer,
+and OneDrive keeps a copy of them.
 
 
 WHERE THINGS GO

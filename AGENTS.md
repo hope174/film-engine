@@ -25,8 +25,8 @@ with `& .\filmengine\run.bat`. In cmd, use `filmengine\run.bat`. From a POSIX sh
    `films/<film-name>/output/<Title>.mp3`.
 5. Verify: you can't listen to the film, so read `output/<Title> - timeline.txt`. It lists the
    time of every line and sound. Check the order and the gaps, and that the total length is
-   sensible. Then commit the film's folder with git. The owner wants all work committed.
-   `films/*/output/` is ignored on purpose, so only the script and its sounds are committed.
+   sensible. Don't commit films: `films/` is ignored on purpose, because the repository is
+   public and the films are private. They are kept on this computer and in OneDrive.
 
 ## Look things up rather than guessing
 
@@ -38,6 +38,8 @@ with `& .\filmengine\run.bat`. In cmd, use `filmengine\run.bat`. From a POSIX sh
   Never name a sound file that doesn't exist. Use a built-in sound, or tell the user which
   sound files they would need to add.
 - Don't use `try`. It plays audio aloud.
+- Don't open `Film Maker.bat` or `filmengine.app`. That is the window for people, and it takes
+  keyboard focus from the user. Use the commands above instead.
 
 These English voices are known to exist and sound distinct. Use the short name in the cast:
 - American men: Andrew, Brian, Guy, Christopher, Eric, Roger, Steffan.
@@ -90,4 +92,5 @@ Narrator: <What the listener needs to picture.>
 Only change the engine if you are asked to. Engine code is in `filmengine/`, and `README.md` explains how it works.
 After changing the script format, `Syntax.txt` or `Script guide.txt`, run
 `python -m filmengine.check_syntax_file` through the same Python. Every example in `Syntax.txt` must
-behave as labelled. Then make `films/the-lighthouse` to check that nothing broke.
+behave as labelled. Then make `examples/the-lighthouse` to check that nothing broke (`make` takes
+a folder path). Its output folder is ignored by git.

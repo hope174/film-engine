@@ -3,9 +3,12 @@
 __pycache__/
 *.pyc
 
-# Finished films. They are made again from the script at any time,
-# and big audio files would make the history grow fast.
-films/*/output/
+# The films themselves stay private, on this computer only.
+films/
+
+# Finished films and line lists, made again from the script at any time.
+**/output/
+**/lines.txt
 
 # Made by "List voices"
 voice list.txt

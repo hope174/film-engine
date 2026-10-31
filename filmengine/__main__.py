@@ -10,76 +10,31 @@
 """
 
 import argparse
-import difflib
 import os
 import sys
 import time
 import traceback
-from pathlib import Path
 
 from .errors import FilmError
-from .paths import CACHE_DIR, FILMS_DIR, ROOT, SHARED_SOUNDS_DIR, TEMPLATE
+from .films import check_film, create_film, find_script, list_films, make_film
+from .paths import CACHE_DIR, ROOT, SHARED_SOUNDS_DIR
 
 ACCENTS = {"american": "en-US", "us": "en-US", "british": "en-GB", "english": "en-GB", "uk": "en-GB",
            "australian": "en-AU", "irish": "en-IE", "canadian": "en-CA", "indian": "en-IN",
            "scottish": "en-GB", "new zealand": "en-NZ", "kiwi": "en-NZ", "south african": "en-ZA"}
 
 
-def find_script(name):
-    if not name:
-        raise FilmError("Tell me which film. For example:  Make a film.bat  the-lighthouse")
-    given = Path(name.strip().strip('"'))
-    if given.is_file():
-        return given.resolve()
-    if given.is_dir():
-        return _script_in(given)
-    folders = [f for f in FILMS_DIR.iterdir() if f.is_dir()] if FILMS_DIR.exists() else []
-    for folder in folders:
-        if folder.name.lower() == name.strip().lower():
-            return _script_in(folder)
-    names = [f.name for f in folders]
-    close = difflib.get_close_matches(name.lower(), [n.lower() for n in names], n=1, cutoff=0.5)
-    message = f'There is no film called "{name}" in the films folder.'
-    if close:
-        message += f" Did you mean {close[0]}?"
-    elif names:
-        message += " The films are: " + ", ".join(names) + "."
-    raise FilmError(message)
-
-
-def _script_in(folder):
-    folder = Path(folder).resolve()
-    if (folder / "script.txt").exists():
-        return folder / "script.txt"
-    texts = [f for f in folder.glob("*.txt") if "timeline" not in f.name.lower() and f.name.lower() != "lines.txt"]
-    if len(texts) == 1:
-        return texts[0]
-    raise FilmError(f"The folder {folder.name} needs a file called script.txt with the film's script in it.")
-
-
-def list_films():
-    if not FILMS_DIR.exists():
-        return []
-    return sorted(f.name for f in FILMS_DIR.iterdir() if f.is_dir())
-
-
 def cmd_make(args):
-    from . import render
-    from .script import parse_script
-
     path = find_script(args.film)
     print(f"Reading {path.parent.name}/{path.name}")
-    script = parse_script(path)
-    formats = ["wav"] if args.wav else script.formats
-    base = path.parent / "output" / render.safe_filename(script.title)
     started = time.time()
-    written, length = render.render(script, base, formats)
+    written, length = make_film(path, wav=args.wav)
     minutes, seconds = divmod(int(round(length)), 60)
     print()
     print(f"Done. The film is {minutes} minutes {seconds} seconds long.")
     for file in written:
         print(f"Saved as: {file}")
-    print(f"A list of what happens when is in: output/{base.name} - timeline.txt")
+    print(f"A list of what happens when is in: output/{written[0].stem} - timeline.txt")
     print("Every line with its id is in lines.txt, next to the script.")
     print(f"(That took {time.time() - started:.0f} seconds.)")
     if args.play:
@@ -94,35 +49,20 @@ def cmd_make(args):
 
 
 def cmd_check(args):
-    from . import render
-    from .script import Line, parse_script
+    from .script import Line
 
-    path = find_script(args.film)
-    script = parse_script(path)
-    render.check(script)
+    script = check_film(find_script(args.film))
     lines = sum(isinstance(e, Line) for e in script.events)
     print(f'"{script.title}" looks good. {len(script.cast)} characters and {lines} spoken lines. No problems found.')
 
 
 def cmd_new(args):
-    name = " ".join(args.name).strip()
-    if not name:
-        raise FilmError("Give the new film a name, for example:  New film.bat  the-haunted-house")
-    folder_name = "-".join(name.lower().split())
-    folder = FILMS_DIR / folder_name
-    if folder.exists():
-        raise FilmError(f"There is already a film called {folder_name}. Pick another name.")
-    (folder / "sounds").mkdir(parents=True)
-    (folder / "sounds" / "put this film's sound files here.txt").write_text(
-        "Put sound files for this film in this folder (wav, mp3, ogg or flac).\n"
-        "In the script, use the file name without the ending, for example [sound: door-slam]\n",
-        encoding="utf-8")
-    template = TEMPLATE.read_text(encoding="utf-8").replace("{title}", name.title())
-    (folder / "script.txt").write_text(template, encoding="utf-8")
+    script = create_film(" ".join(args.name))
+    folder_name = script.parent.name
     print(f"Made a new film folder: films/{folder_name}")
     print(f"Open films/{folder_name}/script.txt to write the script.")
     if args.open:
-        os.startfile(folder / "script.txt")
+        os.startfile(script)
 
 
 def cmd_voices(args):
@@ -152,20 +92,10 @@ def cmd_voices(args):
 
 
 def cmd_try(args):
-    from . import audio, effects, tts, voices
-    from .script import OptionError, parse_options
+    from .films import voice_sample
 
-    voice = voices.resolve(args.voice)
-    text = " ".join(args.text) or f"Hello. My name is {voices.short_name(voice)}. This is how I sound."
-    try:
-        opts = parse_options(args.style) if args.style else parse_options("")
-    except OptionError as e:
-        raise FilmError(str(e))
-    path = tts.synthesize([(text, voice, opts.rate, opts.pitch)])[(text, voice, opts.rate, opts.pitch)]
-    clip = effects.apply(audio.load(path), opts.effects)
-    clip = effects.position(clip, opts.angle, opts.distance, opts.movement) * opts.gain
-    written = audio.save(clip, CACHE_DIR / "try-a-voice.mp3")
-    print(f"Playing {voice}.")
+    written = voice_sample(args.voice, " ".join(args.text), args.style)
+    print(f"Playing {args.voice}.")
     os.startfile(written)
 
 
