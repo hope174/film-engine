@@ -10,8 +10,8 @@ This file is for whoever maintains the engine.
 ## Setup
 
 `Setup.bat` installs Python 3.12 (via winget, if missing), the packages in `requirements.txt`,
-and ffmpeg. ffmpeg is optional: without it, MP3 output falls back to WAV and only
-wav/mp3/flac/ogg can be read (via miniaudio).
+and ffmpeg. ffmpeg is optional: without it, MP3 and OGG output are written by libsndfile (through
+soundfile), and only wav/mp3/flac/ogg can be read (via miniaudio).
 
 ## Film Maker (the window)
 
@@ -75,3 +75,16 @@ Built-in procedural sounds are in `builtin_sounds.py`.
 computer and in OneDrive. `examples/the-lighthouse` is a tracked example film. `.cache/`, every
 `output/` folder and every `lines.txt` are ignored, since they can be made again. `Save my work.bat` runs `git add -A` and a dated commit.
 The remote is https://github.com/hope174/film-engine (public).
+
+## Releases
+
+`build/make_release.py <version>` builds `Film Maker.exe` with PyInstaller (one folder, no console)
+and zips it with `build/Read me first.txt` (the read-me for downloaders), `Syntax.txt`,
+`Script guide.txt`, `sound-folders.txt`, the example script and empty `films` and `sounds` folders.
+Run it with a Python that has `requirements.txt` and `pyinstaller` installed, ideally a venv.
+The output goes to `%TEMP%\film-maker-build`, because OneDrive locks files in the build folders.
+Upload the zip with `gh release create v<version> <zip>`.
+
+When frozen, `paths.py` puts `ROOT` next to the exe and reads `template_script.txt` from the bundle.
+`Film Maker.exe <command>` (and `Film Maker.pyw <command>`) runs the same commands as `run.bat`
+without the window. With no console, the output goes to `.cache/last-run.txt`.
