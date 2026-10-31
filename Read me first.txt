@@ -14,7 +14,7 @@ this once on each computer.
 
 THE EASY WAY: FILM MAKER
 
-Double-click Film Maker.bat. A window opens where you can do everything:
+Double-click Film Maker.pyw, or Film Maker.bat. A window opens where you can do everything:
 write the script, add characters, lines and sounds, make the film and listen to it.
 It works with screen readers such as NVDA and JAWS.
 
@@ -26,6 +26,9 @@ Alt G goes to the messages, which say what has happened.
 The keys you will use most:
 Control N starts a new film.
 Control K adds a character to the cast and lets you choose and hear their voice.
+Control Shift K changes a character's voice. Sliders set the speed, pitch and volume:
+arrow keys move a slider by 1, Page Up and Page Down by 10. The spoken line and
+Try a voice windows have the same sliders.
 Control L adds a spoken line. Control B adds a sound or music.
 Control P adds a pause. Control T stops sounds. Control E marks a new scene.
 Control S saves the script.

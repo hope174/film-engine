@@ -21,7 +21,9 @@ It is built for screen reader users. It only uses native controls (ListBox, Text
 standard dialogs), puts a mnemonic label before every control, gives every action a menu item and
 a shortcut, and reports results in dialogs. Making a film runs on a worker thread, and its
 progress goes to the messages box through `wx.CallAfter`. When a check fails, the cursor moves to
-the first problem line. Launch it with `Film Maker.bat`, which uses pythonw.
+the first problem line. Launch it with `Film Maker.pyw`, which opens through the pyw launcher, or `Film Maker.bat`,
+which finds Python itself. The speed, pitch and volume sliders write `rate`, `pitch` and `volume`
+options, and `split_settings` reads them back so a cast line can be edited.
 
 `filmengine/films.py` has the operations the app and the command line share: find, create,
 check and make a film, and make a voice sample.

@@ -10,6 +10,7 @@ out, and the Messages box keeps a full record.
 """
 
 import os
+import re
 import sys
 import threading
 import traceback
@@ -109,31 +110,104 @@ def voice_choices():
     return choices
 
 
+SETTING = re.compile(r"^(rate|speed|pitch|volume)\s*:?\s*([+-]?\d+(?:\.\d+)?)\s*(%|hz)?$", re.IGNORECASE)
+
+
+def split_settings(options):
+    """'low, rate -10%, volume 80' -> (rate -10, pitch 0, volume 80, 'low')."""
+    rate, pitch, volume, others = 0, 0, 100.0, []
+    for piece in (p.strip() for p in options.split(",")):
+        match = SETTING.match(piece)
+        if not match:
+            if piece:
+                others.append(piece)
+        elif match.group(1).lower() in ("rate", "speed"):
+            rate += int(float(match.group(2)))
+        elif match.group(1).lower() == "pitch":
+            pitch += int(float(match.group(2)))
+        else:
+            volume *= float(match.group(2)) / 100
+    return rate, pitch, int(round(volume)), ", ".join(others)
+
+
+class VoiceSliders:
+    """Speed, pitch and volume sliders. Screen readers read each slider's number as it moves:
+    arrow keys move by 1, Page Up and Page Down by 10, Home and End go to the ends."""
+
+    def __init__(self, dialog, rate=0, pitch=0, volume=100):
+        self.rate = self._slider(dialog, "S&peed, in percent. 0 is normal, below 0 is slower, above 0 is faster:",
+                                 rate, -50, 100)
+        self.pitch = self._slider(dialog, "Pitc&h, in hertz. 0 is normal, below 0 is deeper, above 0 is higher. "
+                                  "Windows voices ignore pitch:", pitch, -50, 50)
+        self.volume = self._slider(dialog, "Vol&ume, in percent. 100 is normal:", volume, 0, 200)
+        reset = wx.Button(dialog, label="&Reset speed, pitch and volume")
+        reset.Bind(wx.EVT_BUTTON, self.on_reset)
+        dialog.sizer.Add(reset, 0, wx.LEFT | wx.TOP, 8)
+
+    @staticmethod
+    def _slider(dialog, label, value, low, high):
+        slider = wx.Slider(dialog, value=max(low, min(high, value)), minValue=low, maxValue=high,
+                           style=wx.SL_HORIZONTAL)
+        slider.SetLineSize(1)
+        slider.SetPageSize(10)
+        return dialog.field(label, slider)
+
+    def on_reset(self, event):
+        self.rate.SetValue(0)
+        self.pitch.SetValue(0)
+        self.volume.SetValue(100)
+
+    def text(self):
+        """The settings as script words, leaving out anything at its normal value."""
+        parts = []
+        if self.rate.GetValue():
+            parts.append(f"rate {self.rate.GetValue():+d}%")
+        if self.pitch.GetValue():
+            parts.append(f"pitch {self.pitch.GetValue():+d}hz")
+        if self.volume.GetValue() != 100:
+            parts.append(f"volume {self.volume.GetValue()}")
+        return ", ".join(parts)
+
+
+def join_options(*parts):
+    return ", ".join(p.strip().strip(",").strip() for p in parts if p and p.strip().strip(","))
+
+
 class CharacterDialog(FormDialog):
-    def __init__(self, parent, choices):
-        super().__init__(parent, "Add a character")
-        self.name = self.field("Character's &name:", wx.TextCtrl(self))
-        self.choices = choices
+    """Adds a character, or with an existing cast line, changes their voice."""
+
+    def __init__(self, parent, choices, name="", voice=None, options=""):
+        super().__init__(parent, "Change a character's voice" if voice else "Add a character")
+        rate, pitch, volume, styles = split_settings(options)
+        self.choices = list(choices)
+        if voice and not any(c[1].lower() == voice.lower() for c in self.choices):
+            self.choices.insert(0, (f"{voice}, the voice this character has now", voice))
+        self.name = self.field("Character's &name:", wx.TextCtrl(self, value=name))
         self.voice = self.field("&Voice:", wx.ListBox(self, choices=[c[0] for c in self.choices],
-                                                       size=(-1, 220)), 1)
+                                                       size=(-1, 200)), 1)
+        chosen = [i for i, c in enumerate(self.choices) if voice and c[1].lower() == voice.lower()]
         if self.choices:
-            self.voice.SetSelection(0)
-        self.styles = self.field("&Styles, separated by commas, or leave empty. For example: low, slow",
-                                 wx.TextCtrl(self))
+            self.voice.SetSelection(chosen[0] if chosen else 0)
+        self.sliders = VoiceSliders(self, rate, pitch, volume)
+        self.styles = self.field("Other &styles, separated by commas, or leave empty. For example: low, radio",
+                                 wx.TextCtrl(self, value=styles))
         self.try_button = wx.Button(self, label="&Try this voice")
         self.try_button.Bind(wx.EVT_BUTTON, self.on_try)
         self.finish([self.try_button])
         self.Bind(wx.EVT_BUTTON, self.on_ok, id=wx.ID_OK)
-        self.name.SetFocus()
+        (self.voice if voice else self.name).SetFocus()
 
     def voice_name(self):
         i = self.voice.GetSelection()
         return self.choices[i][1] if i != wx.NOT_FOUND else None
 
+    def options(self):
+        return join_options(self.sliders.text(), self.styles.GetValue())
+
     def on_try(self, event):
         voice = self.voice_name()
         if voice:
-            self.GetParent().try_voice(voice, "", self.styles.GetValue())
+            self.GetParent().try_voice(voice, "", self.options())
 
     def on_ok(self, event):
         if not self.name.GetValue().strip():
@@ -148,18 +222,21 @@ class CharacterDialog(FormDialog):
         event.Skip()
 
     def line(self):
-        styles = self.styles.GetValue().strip().strip(",")
-        return f"{self.name.GetValue().strip()} = {self.voice_name()}" + (f", {styles}" if styles else "")
+        options = self.options()
+        return f"{self.name.GetValue().strip()} = {self.voice_name()}" + (f", {options}" if options else "")
 
 
 class LineDialog(FormDialog):
+    """A spoken line. The sliders change only this line, on top of the character's own settings."""
+
     def __init__(self, parent, cast):
         super().__init__(parent, "Add a spoken line")
         self.who = self.field("&Who speaks:", wx.Choice(self, choices=cast))
         self.who.SetSelection(0)
-        self.styles = self.field("&How they say it, or leave empty. For example: whisper, behind",
+        self.words = self.field("Wo&rds they say:", wx.TextCtrl(self, size=(-1, 70), style=wx.TE_MULTILINE), 1)
+        self.styles = self.field("How they sa&y it, or leave empty. For example: whisper, behind",
                                  wx.TextCtrl(self))
-        self.words = self.field("&Words they say:", wx.TextCtrl(self, size=(-1, 70), style=wx.TE_MULTILINE), 1)
+        self.sliders = VoiceSliders(self)
         self.finish()
         self.Bind(wx.EVT_BUTTON, self.on_ok, id=wx.ID_OK)
         self.who.SetFocus()
@@ -172,7 +249,7 @@ class LineDialog(FormDialog):
         event.Skip()
 
     def line(self):
-        styles = self.styles.GetValue().strip().strip(",")
+        styles = join_options(self.styles.GetValue(), self.sliders.text())
         words = " ".join(self.words.GetValue().split())
         return f"{self.who.GetStringSelection()}" + (f" ({styles})" if styles else "") + f": {words}"
 
@@ -342,6 +419,8 @@ class FilmMaker(wx.Frame):
         ])
         menu("&Insert", [
             ("&Character...\tCtrl+K", "Add someone to the cast and choose their voice", self.on_insert_character),
+            ("Change a character's &voice...\tCtrl+Shift+K", "Change the voice, speed, pitch or volume of someone "
+             "in the cast", self.on_change_voice),
             ("Spoken &line...\tCtrl+L", "Add a line someone says", self.on_insert_line),
             ("&Sound or music...\tCtrl+B", "Add a sound effect, music or ambience", self.on_insert_sound),
             ("&Pause...\tCtrl+P", "Add a few seconds where nothing new happens", self.on_insert_pause),
@@ -651,14 +730,54 @@ class FilmMaker(wx.Frame):
 
     # ---------- inserting
 
-    def cast_names(self):
-        names = []
+    def cast_lines(self):
+        """(line index, name, voice, options) for each cast line in the script."""
+        cast = []
         for i in range(self.editor.GetNumberOfLines()):
             text = self.editor.GetLineText(i).strip()
             match = CAST_LINE.match(text)
             if match and not text.startswith(("[", "#")):
-                names.append(match.group(1).strip())
-        return names
+                voice, _, options = match.group(2).partition(",")
+                cast.append((i, match.group(1).strip(), voice.strip(), options.strip()))
+        return cast
+
+    def cast_names(self):
+        return [name for _, name, _, _ in self.cast_lines()]
+
+    def replace_line(self, index, text):
+        start = self.editor.XYToPosition(0, index)
+        self.editor.Replace(start, start + self.editor.GetLineLength(index), text)
+        self.editor.SetInsertionPoint(start)
+
+    def on_change_voice(self, event):
+        if not self.need_film():
+            return
+        cast = self.cast_lines()
+        if not cast:
+            self.tell("There is nobody in the cast yet. Add a character first with Control K.")
+            return
+        line, _ = self.current_line()
+        here = [i for i, c in enumerate(cast) if c[0] == line]
+        with wx.SingleChoiceDialog(self, "Whose voice do you want to change?", "Change a character's voice",
+                                   [f"{name}, now {voice}" + (f", {options}" if options else "")
+                                    for _, name, voice, options in cast]) as d:
+            d.SetSelection(here[0] if here else 0)
+            if d.ShowModal() != wx.ID_OK:
+                return
+            index, name, voice, options = cast[d.GetSelection()]
+        try:
+            with wx.BusyCursor():
+                choices = voice_choices()
+        except FilmError as e:
+            self.tell(str(e))
+            return
+        with CharacterDialog(self, choices, name, voice, options) as dialog:
+            if dialog.ShowModal() != wx.ID_OK:
+                return
+            text = dialog.line()
+        self.replace_line(index, text)
+        self.editor.SetFocus()
+        self.say(f"Changed line {index + 1} to: {text}")
 
     def insert_after_line(self, line, text):
         end = self.editor.XYToPosition(0, line) + self.editor.GetLineLength(line)
@@ -772,11 +891,12 @@ class FilmMaker(wx.Frame):
         voice = dialog.field("&Voice name, such as Ryan, Sonia or Microsoft David:", wx.TextCtrl(dialog, value="Ryan"))
         words = dialog.field("&Words to say, or leave empty for a hello:", wx.TextCtrl(dialog))
         style = dialog.field("&Styles, such as whisper, echo, or leave empty:", wx.TextCtrl(dialog))
+        sliders = VoiceSliders(dialog)
         dialog.finish()
         voice.SetFocus()
         with dialog:
             if dialog.ShowModal() == wx.ID_OK and voice.GetValue().strip():
-                self.try_voice(voice.GetValue().strip(), words.GetValue(), style.GetValue())
+                self.try_voice(voice.GetValue().strip(), words.GetValue(), join_options(style.GetValue(), sliders.text()))
 
     def on_word_list(self, event):
         import contextlib
@@ -799,6 +919,7 @@ class FilmMaker(wx.Frame):
             "F7: check the script for mistakes.",
             "F9: play the finished film.",
             "Control K: add a character to the cast.",
+            "Control Shift K: change a character's voice, speed, pitch or volume.",
             "Control L: add a spoken line.",
             "Control B: add a sound or music.",
             "Control P: add a pause.",
