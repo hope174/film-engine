@@ -1,0 +1,213 @@
+SYNTAX: HOW EACH LINE SHOULD LOOK
+
+This file shows how every kind of line in a script should look.
+Examples are indented. "Right" shows a line that works. "Wrong" shows a common
+mistake, with the reason after it, so you know what to look out for.
+For a longer explanation of each part, see Script guide.txt.
+To see every word you can use in brackets, run:  filmengine\run.bat words
+
+
+THE SHAPE OF A SCRIPT
+
+A script goes in this order. Only the cast and at least one spoken line are needed.
+1. Notes and the title.
+2. The cast: who is in the film and which voice each one has.
+3. Everything that happens, from the start to the end, one thing on each line.
+
+Example:
+    # The Lighthouse, written by Mara's biggest fan
+    Title: The Lighthouse
+    Narrator = Ryan
+    Mara = Sonia
+    [ambience: waves]
+    Narrator: The boat reached the rocks at midnight.
+    Mara: Hello?
+    [stop all, fade out 3]
+
+
+NOTES
+
+A note starts with a hash sign. The engine skips it.
+Right:
+    # This scene needs more thunder.
+Wrong:
+    Note to self, add thunder
+    (There is no hash sign, so the engine thinks someone is speaking.)
+
+
+SETTINGS
+
+A setting is a word, a colon, then a value. Seconds are written as plain numbers.
+Right:
+    Title: The Lighthouse
+    Gap: 0.5
+    Ending: 4
+    Format: mp3, ogg
+    Scene: The Kitchen
+Wrong:
+    Gap: half a second
+    (Write the number in digits.)
+
+
+THE CAST
+
+Name, equals sign, voice. Styles can follow the voice, after commas.
+Right:
+    Narrator = Ryan
+    Mara = en-GB-SoniaNeural
+    Old Man = Guy, low, slow
+    Radio Host = Aria, radio, rate +10%
+    Screen reader = Microsoft David, rate +20%
+Wrong, and the engine will not warn you:
+    Narrator: Ryan
+    (A colon means someone is speaking, so the narrator would say the word Ryan out loud.
+    The cast uses an equals sign.)
+Wrong:
+    Mara = Sonia, whisper, happy
+    (happy is not a style the engine knows. Run the words list to see the styles.)
+Wrong:
+    Mara = Sonia whisper
+    (Put a comma between the voice and each style.)
+
+
+SPOKEN LINES
+
+Name, colon, words. The name must be in the cast, spelt the same way.
+Capital letters in the name do not matter.
+Right:
+    Mara: Hello? Is anyone there?
+    mara: Capital letters in the name do not matter.
+Wrong:
+    Marra: Hello?
+    (Marra is not in the cast. The engine will ask if you meant Mara.)
+Wrong:
+    Hello? Is anyone there?
+    (Nobody is named, so the engine does not know who says it.)
+
+A long line can carry on to the next line of the file, with no empty line between.
+Right:
+    Narrator: The lamp had been dark for three days,
+        and nobody in the village would say why.
+
+
+HOW A LINE IS SAID
+
+Put styles in round brackets, between the name and the colon. Separate them with commas.
+Right:
+    Mara (whisper): Did you hear that?
+    Mara (whisper, echo): Did you hear that?
+    Keeper (low, slow, behind): I have been waiting.
+    Keeper (volume 60, rate -10%): I have been waiting.
+    Mara (on the phone): I'm outside.
+Wrong, and the engine will not warn you:
+    Mara: (whisper) Did you hear that?
+    (The brackets must come before the colon. After the colon, the word whisper is spoken out loud.)
+Wrong:
+    Mara [whisper]: Did you hear that?
+    (Use round brackets for styles. Square brackets are for sounds.)
+
+
+SOUNDS
+
+Square brackets, the word sound, a colon, then the sound's name. Options follow, after commas.
+Use the file's name without the ending: door-slam.wav is written as door-slam.
+Right:
+    [sound: knock]
+    [sound: knock, left]
+    [sound: thunder, nowait]
+    [sound: thunder, nowait, delay 1.5, behind right]
+    [sound: footsteps, move left to right, volume 70]
+    [sound: phone, length 3, fade out 1]
+Wrong:
+    [sound knock]
+    (There must be a colon after the word sound.)
+Wrong:
+    [sound: knock
+    (The closing square bracket is missing.)
+
+
+MUSIC AND BACKGROUND SOUNDS
+
+The same shape as a sound, but with music, ambience or background in front.
+They keep playing, repeating, until they are stopped.
+Right:
+    [music: drone, fade in 3]
+    [music: drone, volume 40, no duck]
+    [music: chime, once]
+    [ambience: rain]
+    [ambience: wind, volume -6 db, fade in 4]
+    [background: fire, left]
+
+
+STOPPING
+
+Right:
+    [stop music]
+    [stop ambience, fade out 4]
+    [stop all]
+    [stop all, fade out 5]
+Wrong:
+    [music stop]
+    (The word stop comes first.)
+
+
+A SOUND THAT LOOPS
+
+Add loop to a sound. Stop it with its own name.
+Right:
+    [sound: clock, loop]
+    [stop clock]
+
+
+PAUSES
+
+Right:
+    [pause 2]
+    [pause 0.5]
+    [pause: 3 seconds]
+Wrong:
+    [pause two]
+    (Write the number in digits.)
+
+
+SPEAKING AT THE SAME TIME
+
+Add overlap to the second line. It starts at the same moment as the line before it.
+Right:
+    Mara: Run!
+    Keeper (overlap): Get down!
+
+
+SCENES
+
+Right:
+    Scene: The Lighthouse Stairs
+    [scene: The Lighthouse Stairs]
+
+
+A WHOLE SHORT FILM
+
+This is a complete script that works. Copy it into a new film's script.txt to try it.
+Example:
+    Title: The Visitor
+    Narrator = Ryan
+    Mara = Sonia
+    Stranger = Guy, low
+
+    Scene: The Front Door
+    [ambience: rain, fade in 2]
+    [music: drone, volume 40, fade in 4]
+    Narrator: Mara was alone in the house when the knocking began.
+    [sound: knock, front left]
+    Mara (whisper): Who's there?
+    [pause 1.5]
+    [sound: knock, front left, volume 120]
+    Stranger (muffled, front left): Let me in. It's cold out here.
+    Mara (loud): Go away!
+    [sound: thunder, nowait, behind right]
+    Stranger (overlap, muffled, front left): Please.
+    [stop music, fade out 2]
+    [pause 1]
+    [sound: footsteps, going away]
+    Narrator: And then, the footsteps went away.
+    [stop all, fade out 4]

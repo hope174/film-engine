@@ -16,8 +16,9 @@ MAKING A FILM, STEP BY STEP
 
 1. Double-click New film.bat and type a name for your film, such as the haunted house.
    A new folder is made inside the films folder, and its script opens in Notepad.
-2. Write your script and save it. The file "Script guide.txt" explains everything
-   you can write. The starter script shows the basics.
+2. Write your script and save it. The file "Syntax.txt" shows how every kind of line
+   should look, with right and wrong examples. "Script guide.txt" explains everything
+   in more detail. The starter script shows the basics.
 3. Double-click Make a film.bat and type the film's folder name, such as the-haunted-house.
    The engine reads the script, makes the voices and mixes everything together.
 4. When it says "Done", type y and press Enter to listen to it.
@@ -34,6 +35,7 @@ Check a script.bat looks for mistakes in a script without making the film. It is
 List voices.bat shows all the voices you can give your characters, in Notepad.
 Try a voice.bat lets you hear a voice saying anything you like, in any style.
 List sounds.bat lists the sounds you can use without any sound files, such as rain and thunder.
+List words.bat shows every word you can put in brackets, such as whisper, echo or behind, in Notepad.
 Save my work.bat saves a copy of everything in the history.
 
 
@@ -56,3 +58,11 @@ only fetches the lines you changed.
 
 If the engine says "Something went wrong inside the engine", that is not your fault.
 Send the file it names to the person who looks after the engine.
+
+
+ASKING AN AI TO MAKE A FILM
+
+An AI helper, such as Claude, can write and make films in this folder too. It reads
+AGENTS.md to learn how. Just ask it something like: make a short film about a lost dog
+who finds his way home. The film appears in the films folder like any other, and you
+can change its script yourself afterwards.

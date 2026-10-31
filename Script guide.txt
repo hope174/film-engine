@@ -2,6 +2,8 @@ SCRIPT GUIDE
 
 A script is a plain text file called script.txt in the film's folder.
 Each line does one thing. This guide explains every kind of line.
+For short right and wrong examples of each kind of line, see Syntax.txt.
+For a list of every word you can use, double-click List words.bat.
 
 
 NOTES

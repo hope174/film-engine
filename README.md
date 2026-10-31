@@ -3,8 +3,9 @@
 Turns plain-text scripts into audio films: Edge TTS neural voices (or Windows SAPI voices) for the
 characters, plus sound effects, looping music and ambience, voice effects and positional audio.
 
-The person making films should start with `Read me first.txt` and `Script guide.txt`, and use the
-`.bat` files. This file is for whoever maintains the engine.
+The person making films should start with `Read me first.txt`, `Syntax.txt` and `Script guide.txt`,
+and use the `.bat` files. AI agents making films follow `AGENTS.md` (`CLAUDE.md` imports it).
+This file is for whoever maintains the engine.
 
 ## Setup
 
@@ -23,8 +24,15 @@ All `.bat` files call `filmengine\run.bat`, which finds Python and runs `python 
     python -m filmengine try <voice> [text...] [--style "whisper, echo"]
     python -m filmengine films
     python -m filmengine sounds
+    python -m filmengine words
+    python -m filmengine.check_syntax_file
 
-`<film>` is a folder name under `films/`, a folder path, or a script path.
+`<film>` is a folder name under `films/`, a folder path, or a script path. Exit codes: 0 OK,
+1 a problem the user can fix (script, missing film, network), 2 an engine bug.
+
+`words` prints every accepted option word straight from the parser's tables. `check_syntax_file`
+runs every labelled example in `Syntax.txt` through the parser and `render.check`, and fails if any
+example doesn't behave as labelled. Run it after any change to the script format.
 
 ## How it works
 

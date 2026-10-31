@@ -6,6 +6,7 @@
     python -m filmengine voices [words]     list voices, e.g. "british female"
     python -m filmengine try <voice> [text] [--style "whisper, echo"]
     python -m filmengine sounds             list built-in and shared sounds
+    python -m filmengine words              list every style, effect and option word
 """
 
 import argparse
@@ -181,6 +182,34 @@ def cmd_sounds(args):
         print(f"  {f.stem}   ({f.relative_to(SHARED_SOUNDS_DIR)})")
 
 
+def cmd_words(args):
+    from . import builtin_sounds
+    from .effects import EFFECTS
+    from .script import DISTANCE_WORDS, FLAGS, MOVEMENTS, POSITION_WORDS, SPEECH_STYLES, SYNONYMS
+
+    groups = [
+        ("Speaking styles (voices only)", SPEECH_STYLES),
+        # Some effects are reached through a speaking style of the same idea, so list them once.
+        ("Effects (voices and sounds)", [e for e in EFFECTS if e not in SPEECH_STYLES and e not in SYNONYMS
+                                         and e != "drive"]),
+        ("Positions", POSITION_WORDS),
+        ("Distances", DISTANCE_WORDS),
+        ("Movements", MOVEMENTS),
+        ("Sound and music options", sorted(FLAGS | {"no duck"})),
+        ("Settings with a number", ["fade in 2", "fade out 2", "delay 1.5", "skip 2", "length 3",
+                                    "volume 50", "volume -6 db", "gain -6", "rate -10%", "pitch +5hz",
+                                    "pan -50", "angle 120", "distance 3"]),
+        ("Built-in sounds", builtin_sounds.BUILTIN),
+    ]
+    for title, words in groups:
+        print(f"{title}:")
+        print("  " + ", ".join(words))
+        print()
+    print("Other words that mean the same as one above:")
+    for word, meaning in sorted(SYNONYMS.items()):
+        print(f"  {word} means {meaning}")
+
+
 def main(argv=None):
     try:
         sys.stdout.reconfigure(errors="replace")
@@ -221,6 +250,9 @@ def main(argv=None):
 
     p = sub.add_parser("sounds", help="list sounds")
     p.set_defaults(func=cmd_sounds)
+
+    p = sub.add_parser("words", help="list every word a script can use in brackets")
+    p.set_defaults(func=cmd_words)
 
     args = parser.parse_args(argv)
     try:

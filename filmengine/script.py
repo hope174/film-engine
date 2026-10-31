@@ -63,7 +63,7 @@ SYNONYMS = {
     "on the phone": "telephone", "phone": "telephone",
     "on the radio": "radio",
     "distant": "far", "far away": "far", "in the distance": "far",
-    "muffled": "muffled", "through a wall": "muffled", "behind door": "muffled",
+    "through a wall": "muffled", "behind door": "muffled",
     "flashback": "dream", "memory": "dream", "dreaming": "dream",
     "robotic": "robot", "ghostly": "ghost", "cavern": "cave",
     "middle": "center", "centre": "center",
