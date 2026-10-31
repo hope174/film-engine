@@ -18,7 +18,7 @@ from .paths import TTS_CACHE_DIR
 from .voices import SAPI_PREFIX
 
 MAX_AT_ONCE = 4
-RETRIES = 3
+RETRIES = 5  # the voice service sometimes drops a request; waiting and asking again fixes it
 
 
 def _clamp(value, low, high):
@@ -49,7 +49,7 @@ async def _speak(text, voice, rate, pitch, path, gate):
                 return f'The voice made no sound for "{text}". Check the line has real words in it.'
             except Exception as e:  # network trouble: wait and try again
                 last_error = e
-                await asyncio.sleep(1.5 * (attempt + 1))
+                await asyncio.sleep(2.0 * (attempt + 1))
             finally:
                 if temp.exists():
                     temp.unlink()

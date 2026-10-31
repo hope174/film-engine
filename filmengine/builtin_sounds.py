@@ -142,6 +142,43 @@ def drone():
     return _stereo(_loopable(tone * swell + air, 2.0), _loopable(tone * swell[::-1] + air, 2.0), 0.4)
 
 
+def calm():
+    """Soft, warm music: a slow major chord that swells and settles."""
+    t = _t(16)
+    chords = [(220.0, 277.18, 329.63, 440.0), (196.0, 246.94, 293.66, 392.0)]  # A major, then G major
+    half = len(t) // 2
+    tone = np.zeros(len(t))
+    for i, chord in enumerate(chords):
+        part = slice(i * half, (i + 1) * half)
+        tt = t[part]
+        for j, f in enumerate(chord):
+            tone[part] += (np.sin(2 * np.pi * f * tt) + 0.3 * np.sin(2 * np.pi * f * 2.003 * tt)) / (j + 1.5)
+    # Each chord fades in and out so they blend into each other and the loop.
+    ramp = np.sin(np.pi * (np.arange(half) / half)) ** 1.5
+    tone *= np.concatenate([ramp, ramp, np.zeros(len(t) - 2 * half)])
+    tone = tone + 0.6 * np.roll(tone, half)
+    shimmer = 0.85 + 0.15 * np.sin(2 * np.pi * t / 5.3)
+    left = _filter(tone * shimmer, "lowpass", 2500)
+    right = _filter(np.roll(tone, int(0.013 * SR)) * shimmer[::-1], "lowpass", 2500)
+    return _stereo(left, right, 0.45)
+
+
+def gunshot():
+    t = _t(2.5)
+    crack = _filter(_noise(2.5, 19), "highpass", 800) * np.exp(-t * 60)
+    boom = _filter(_noise(2.5, 20), "lowpass", 300, 4) * np.exp(-t * 12) * 3
+    tail = _filter(_noise(2.5, 21), "bandpass", [200, 2500]) * np.exp(-t * 2.5) * 0.25 * (1 - np.exp(-t * 30))
+    return _stereo(crack + boom + tail, crack * 0.9 + boom + np.roll(tail, 400), 0.95)
+
+
+def thud():
+    """Something heavy hitting the floor, or a door shutting."""
+    t = _t(0.8)
+    body = np.sin(2 * np.pi * 60 * t * (1 - 0.4 * t)) * np.exp(-t * 14)
+    knock_part = _filter(_noise(0.8, 22), "lowpass", 900) * np.exp(-t * 35)
+    return _stereo(body + knock_part * 0.8, peak=0.85)
+
+
 def chime():
     t = _t(4)
     bell = sum(np.sin(2 * np.pi * f * t) * a * np.exp(-t * d) for f, a, d in
@@ -159,9 +196,12 @@ BUILTIN = {
     "waves": (waves, "sea waves on a shore, loops smoothly"),
     "fire": (fire, "crackling fire, loops smoothly"),
     "drone": (drone, "dark low hum for tense scenes, loops smoothly"),
+    "calm": (calm, "soft warm music for gentle or loving scenes, loops smoothly"),
     "static": (static, "radio static hiss, loops smoothly"),
     "thunder": (thunder, "a crack and long rumble of thunder"),
     "knock": (knock, "three knocks on a door"),
+    "gunshot": (gunshot, "one gunshot indoors"),
+    "thud": (thud, "something heavy falling, or a door shutting"),
     "footsteps": (footsteps, "eight footsteps walking"),
     "heartbeat": (heartbeat, "a slow heartbeat"),
     "clock": (clock, "a ticking clock"),

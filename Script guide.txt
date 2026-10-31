@@ -1,4 +1,4 @@
-SCRIPT GUIDE
+﻿SCRIPT GUIDE
 
 A script is a plain text file called script.txt in the film's folder.
 Each line does one thing. This guide explains every kind of line.
@@ -164,8 +164,9 @@ Use the file's name without the ending. A file called door-slam.wav is [sound: d
 If a file is inside another folder, you can name the folder too, like [music: ondrosik/Whispered].
 
 These sounds are built in, so they work without any files:
-rain, wind, waves, fire, drone, static, thunder, knock, footsteps,
-heartbeat, clock, beep, phone, chime, click.
+rain, wind, waves, fire, drone, calm, static, thunder, knock, gunshot, thud,
+footsteps, heartbeat, clock, beep, phone, chime, click.
+calm is soft, warm music for gentle or loving scenes. drone is dark music for tense ones.
 A file with the same name as a built-in sound is used instead of the built-in one.
 
 
