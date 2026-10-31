@@ -13,6 +13,7 @@ import subprocess
 
 import edge_tts
 
+from .audio import NO_WINDOW
 from .errors import FilmError
 from .paths import TTS_CACHE_DIR
 from .voices import SAPI_PREFIX
@@ -91,7 +92,8 @@ def _speak_sapi(jobs):
         for text, voice, rate, pitch, path in jobs]), encoding="utf-8")
     script_file.write_text(SAPI_SCRIPT, encoding="utf-8")
     result = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
-                             "-File", str(script_file), str(job_file)], capture_output=True, text=True)
+                             "-File", str(script_file), str(job_file)], capture_output=True, text=True,
+                            creationflags=NO_WINDOW)
     missing = [job for job in jobs if not job[4].exists()]
     if missing:
         raise FilmError(f'The Windows voice could not say "{missing[0][0]}".\n{result.stderr.strip()[:500]}')

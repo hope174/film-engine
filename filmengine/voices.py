@@ -7,6 +7,7 @@ import subprocess
 
 import edge_tts
 
+from .audio import NO_WINDOW
 from .errors import FilmError
 from .paths import CACHE_DIR
 
@@ -55,7 +56,8 @@ def sapi_voices():
                    "Where-Object { $_.Enabled } | ForEach-Object { $_.VoiceInfo.Name }")
         try:
             result = subprocess.run(["powershell", "-NoProfile", "-Command", command],
-                                    capture_output=True, text=True, timeout=60)
+                                    capture_output=True, text=True, timeout=60,
+                                    creationflags=NO_WINDOW)
             _sapi_cache = [line.strip() for line in result.stdout.splitlines() if line.strip()]
         except (OSError, subprocess.SubprocessError):
             _sapi_cache = []

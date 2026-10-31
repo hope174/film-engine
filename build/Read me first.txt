@@ -1,0 +1,71 @@
+FILM MAKER
+
+Film Maker turns a written script into an audio film. You write who says what,
+and which sounds and music play, in a plain text file. Film Maker gives every
+character a voice, adds the sounds and music, and saves the finished film as
+an MP3 file you can listen to or share.
+
+
+GETTING STARTED
+
+1. Unzip the download into a folder you can find again, such as Documents.
+   Keep everything in the Film Maker folder together.
+2. Double-click Film Maker.exe. Nothing else needs to be installed.
+3. If Windows says it protected your PC, choose More info, then Run anyway.
+   This happens because the program is new, not because anything is wrong.
+
+Making a film needs the internet, because the voices come from Microsoft.
+Lines that have been made before are saved, so making a film again is quick.
+
+
+USING THE WINDOW
+
+The window works with screen readers such as NVDA and JAWS.
+It has three parts. Press Tab to move between them, or use these keys:
+Alt L goes to the film list. Arrow up and down to pick a film, and its script opens.
+Alt S goes to the script, where you can read and type.
+Alt G goes to the messages, which say what has happened.
+
+The keys you will use most:
+Control N starts a new film.
+Control K adds a character to the cast and lets you choose and hear their voice.
+Control Shift K changes a character's voice. Sliders set the speed, pitch and volume:
+arrow keys move a slider by 1, Page Up and Page Down by 10.
+Control L adds a spoken line. Control B adds a sound or music.
+Control P adds a pause. Control T stops sounds. Control E marks a new scene.
+Control S saves the script.
+F7 checks the script for mistakes. If there is one, it tells you, and takes you to that line.
+F5 makes the film. When it is ready, it asks if you want to listen.
+F9 plays the finished film.
+Control F finds words. Control G goes to a line number.
+F1 opens the syntax examples. The Help menu lists every shortcut.
+All of these are also in the menus at the top. Press Alt to reach them.
+
+
+WHERE THINGS GO
+
+These are all inside the Film Maker folder.
+films: one folder for each film. Each has script.txt, and a sounds folder for that film's sound files.
+sounds: sound and music files that every film can use.
+sound-folders.txt: list other folders on the computer that have sounds or music in them,
+such as a music library, and Film Maker will look there too.
+examples: a finished script, The Lighthouse, to read or copy.
+Syntax.txt shows how every kind of line should look, with right and wrong examples.
+Script guide.txt explains everything a script can do.
+
+
+WHEN SOMETHING GOES WRONG
+
+If the script has a mistake, Film Maker tells you the line number and what is wrong,
+and often suggests the right word. Fix the line, save, and try again.
+
+If it says "Something went wrong inside the engine", that is not your fault.
+It names a file. Please report the problem on the project's GitHub page,
+and attach that file.
+
+
+UPDATING
+
+Download the new zip and unzip it over the old Film Maker folder.
+Your films and sounds folders are kept. If you listed folders in sound-folders.txt,
+copy that file somewhere first, then put it back afterwards.

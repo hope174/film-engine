@@ -16,6 +16,8 @@ import soundfile
 from .errors import FilmError
 
 SAMPLE_RATE = 44100
+# Stops ffmpeg and PowerShell flashing a black window when run from Film Maker.
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 AUDIO_EXTENSIONS = {".wav", ".mp3", ".ogg", ".flac", ".m4a", ".aac", ".opus", ".wma", ".aif", ".aiff"}
 
 
@@ -61,7 +63,7 @@ def load(path):
         )
     result = subprocess.run(
         [ffmpeg, "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(SAMPLE_RATE), "-"],
-        capture_output=True,
+        capture_output=True, creationflags=NO_WINDOW,
     )
     if result.returncode != 0 or not result.stdout:
         raise FilmError(f"I can't read the sound file {path.name}. It may be damaged or not a sound file.")
@@ -81,16 +83,20 @@ def save(audio, path, title=None):
             if title:
                 command += ["-metadata", f"title={title}"]
             command += (["-b:a", "192k"] if suffix == ".mp3" else ["-c:a", "libvorbis", "-q:a", "6"]) + [str(path)]
-            result = subprocess.run(command, input=audio.tobytes(), capture_output=True)
+            result = subprocess.run(command, input=audio.tobytes(), capture_output=True, creationflags=NO_WINDOW)
             if result.returncode == 0:
                 return path
-        if suffix == ".ogg":
-            # libsndfile's Vorbis encoder crashes on big writes, so feed it small pieces.
-            with soundfile.SoundFile(str(path), "w", SAMPLE_RATE, 2, format="OGG", subtype="VORBIS") as f:
+        # No ffmpeg: libsndfile can write both. Its encoders crash on big writes, so feed it small pieces.
+        kind = ("OGG", "VORBIS") if suffix == ".ogg" else ("MP3", "MPEG_LAYER_III")
+        try:
+            with soundfile.SoundFile(str(path), "w", SAMPLE_RATE, 2, format=kind[0], subtype=kind[1]) as f:
                 for i in range(0, len(audio), 4096):
                     f.write(audio[i:i + 4096])
             return path
-        path = path.with_suffix(".wav")  # no ffmpeg: fall back to WAV
+        except (soundfile.LibsndfileError, ValueError, TypeError):
+            if suffix == ".ogg":
+                raise
+        path = path.with_suffix(".wav")  # this libsndfile can't write MP3: fall back to WAV
     soundfile.write(str(path), audio, SAMPLE_RATE, subtype="PCM_16")
     return path
 
