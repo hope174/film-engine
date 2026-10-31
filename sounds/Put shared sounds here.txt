@@ -1,0 +1,8 @@
+Sound and music files in this folder can be used by every film.
+You can make folders inside this one to keep things tidy, for example doors, music, or weather.
+
+In a script, use the file's name without the ending.
+For example, a file called door-slam.wav is used like this:
+[sound: door-slam]
+
+If two files have the same name, the one in the film's own sounds folder is used first.

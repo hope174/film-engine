@@ -1,0 +1,16 @@
+Every line in the film. To replace one with a recording, save it in the voice folder named by its id, for example voice/L012.wav, then make the film again.
+The ids follow the order of the lines, so adding a line earlier in the script changes the ids after it.
+
+L001  Narrator: The boat scraped against the rocks just after midnight.
+L002  Narrator: Mara climbed out, and looked up at the lighthouse. Its lamp had been dark for three days.
+L003  Mara: Hello? Mister Hale? It's Mara, from the coastguard.
+L004  Mara: Come on. Please be in there.
+L005  Keeper: Who's there?
+L006  Mara: Mister Hale! Thank goodness. The light is out!
+L007  Keeper: The light is out because I put it out.
+L008  Mara: Why would you do that?
+L009  Keeper: Because something out there... was following it.
+L010  Radio: Coastguard to Mara. Do you read me? Over.
+L011  Mara: Don't answer. Not yet.
+L012  Keeper: It is coming in with the tide.
+L013  Narrator: The end.

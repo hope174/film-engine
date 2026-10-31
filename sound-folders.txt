@@ -1,0 +1,7 @@
+# Extra folders where the engine looks for sound and music files.
+# Put one folder on each line. Folders inside them are searched too.
+# Lines that start with a hash sign are ignored.
+#
+# For example:
+# C:\Users\hmcma\Music\Ondrosik
+# D:\Sound effects\Doors

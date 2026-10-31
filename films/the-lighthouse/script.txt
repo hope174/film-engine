@@ -1,0 +1,47 @@
+﻿# An example film that shows off what the engine can do.
+# Make it with:  Make a film.bat  the-lighthouse
+
+Title: The Lighthouse Keeper
+
+# The cast
+Narrator = en-GB-RyanNeural
+Mara = Sonia
+Keeper = Guy, low, slow
+Radio = Aria, radio
+
+Scene: Arrival
+
+[ambience: waves, fade in 3]
+[background: wind, volume 60]
+Narrator: The boat scraped against the rocks just after midnight.
+Narrator: Mara climbed out, and looked up at the lighthouse.
+    Its lamp had been dark for three days.
+[sound: footsteps, move left to right]
+Mara: Hello? Mister Hale? It's Mara, from the coastguard.
+[sound: knock]
+[pause 1.5]
+[sound: knock, front left, volume +3 db]
+Mara (quiet): Come on. Please be in there.
+
+Scene: Inside
+
+[stop background, fade out 2]
+[ambience: drone, fade in 4, volume 70]
+[sound: click]
+Keeper (behind, distance 3): Who's there?
+Mara (loud): Mister Hale! Thank goodness. The light is out!
+Keeper: The light is out because I put it out.
+Mara (whisper, nervous): Why would you do that?
+Keeper (echo): Because something out there... was following it.
+
+[sound: static, length 1.5, nowait]
+Radio: Coastguard to Mara. Do you read me? Over.
+Mara (thinking): Don't answer. Not yet.
+[sound: thunder, nowait, delay 0.5, behind right]
+Keeper (ghost): It is coming in with the tide.
+
+[pause 2]
+[stop all, fade out 5]
+[pause 1]
+[sound: chime]
+Narrator: The end.

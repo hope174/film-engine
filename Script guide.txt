@@ -1,0 +1,177 @@
+SCRIPT GUIDE
+
+A script is a plain text file called script.txt in the film's folder.
+Each line does one thing. This guide explains every kind of line.
+
+
+NOTES
+
+A line that starts with a hash sign is a note for you. The engine ignores it.
+    # Remember to add the thunder here.
+
+
+THE TITLE AND SETTINGS
+
+    Title: The Haunted House
+The title is used for the finished file's name.
+
+    Gap: 0.5
+How many seconds of quiet go between spoken lines. The usual gap is half a second.
+
+    Ending: 3
+How many seconds the film carries on after the last line, while the music fades out. The usual ending is 3 seconds.
+
+    Format: mp3
+What kind of file to save. You can use mp3, ogg, wav, or all. You can list more than one, like Format: mp3, ogg
+
+    Scene: The Kitchen
+Marks the start of a scene. It is not spoken. It shows in the timeline file to help you find your place.
+
+
+THE CAST
+
+Each character gets a voice with a line like this:
+    Narrator = Ryan
+    Mara = Sonia
+    Old Man = Guy, low, slow
+
+The name goes first, then an equals sign, then the voice. Run List voices.bat to see all the voices.
+You can use the short name, such as Ryan, or the full name, such as en-GB-RyanNeural.
+After the voice you can add styles, separated by commas. They are used every time that character speaks.
+
+The Windows voices that screen readers use work too:
+    Screen reader = Microsoft David, rate +20%
+    Computer = Microsoft Zira
+
+
+SPOKEN LINES
+
+Write the character's name, a colon, then what they say:
+    Mara: Hello? Is anyone there?
+
+To change how one line is said, put styles in brackets after the name:
+    Mara (whisper): Did you hear that?
+    Keeper (behind, echo): I have been waiting for you.
+
+A long line can carry on to the next line of the file. Just keep writing, with no empty line in between.
+
+
+SPEAKING STYLES
+
+slow, very slow, fast, very fast
+high, very high, low, deep, very low, very deep
+quiet, very quiet, soft, loud, very loud
+whisper, shout, monster, child, old
+sad, excited, nervous, thinking
+
+You can also set exact amounts:
+    rate -10%      speaks 10 percent slower. Use + for faster.
+    pitch +5hz     a slightly higher voice. Use - for lower.
+    volume 50      half as loud. 100 is normal.
+    volume -6 db   another way to set loudness, in decibels. -6 is about half as loud.
+    gain -6        the same as volume -6 db.
+
+
+EFFECTS
+
+These work on voices and on sounds:
+echo, big echo, reverb, room, hall, church, cave
+telephone, radio, megaphone, voice chat, teamtalk, announcer
+robot, ghost, monster, underwater, muffled, far, dream, thought
+distorted, wobble, dry
+
+behind the door is the same as muffled. on the phone is the same as telephone.
+pa and stadium are the same as announcer. flashback and memory are the same as dream.
+
+
+WHERE A SOUND COMES FROM
+
+Sounds and voices can come from around the listener. This works best with headphones.
+    left, right, far left, far right, ahead, center
+    front left, front right, behind, behind left, behind right
+    angle 120      an exact angle. 0 is straight ahead, 90 is the right ear,
+                   -90 is the left ear, 180 is behind.
+    distance 3     three times further away than normal. Far sounds are quieter and duller.
+    close, very close, near
+
+Sounds can move while they play:
+    move left to right, move right to left, coming closer, going away
+
+
+SOUNDS
+
+A sound plays once. The script waits for it to finish before going on:
+    [sound: knock]
+    [sound: door-slam, left, volume 80]
+
+To let the script carry on while the sound plays, add nowait:
+    [sound: thunder, nowait]
+
+Other things you can add to a sound:
+    delay 1.5      start one and a half seconds later
+    skip 2         leave out the first 2 seconds of the sound file
+    length 3       only play 3 seconds of it
+    fade in 1, fade out 2
+    reverse        play it backwards
+
+
+MUSIC AND BACKGROUND SOUNDS
+
+Music and background sounds keep playing, repeating if they need to, until you stop them:
+    [music: calm-piano, fade in 3]
+    [ambience: rain]
+    [background: crowd, volume 40]
+
+There are three of these: music, ambience and background. Each can play one thing at a time,
+so all three can play together. Starting new music replaces the old music.
+
+Music gets quieter by itself when someone speaks, and louder again after. To stop that, add no duck.
+To make ambience or background do it too, add duck.
+
+To play music only once, without repeating, add once:
+    [music: sting, once]
+
+To stop them:
+    [stop music]
+    [stop ambience, fade out 4]
+    [stop all]
+
+To make a sound repeat like music, add loop. Stop it using its name:
+    [sound: clock, loop]
+    [stop clock]
+
+
+PAUSES
+
+    [pause 2]
+Two seconds where nothing new happens. Music and background sounds keep playing.
+
+
+SPEAKING AT THE SAME TIME
+
+Add overlap to a line to start it at the same time as the line before:
+    Mara: Run!
+    Keeper (overlap): Get down!
+
+
+SOUND FILES
+
+Sound files can be wav, mp3, ogg or flac. Put them in the film's sounds folder,
+or in the shared sounds folder for every film, or in a folder listed in sound-folders.txt.
+Use the file's name without the ending. A file called door-slam.wav is [sound: door-slam].
+If a file is inside another folder, you can name the folder too, like [music: ondrosik/Whispered].
+
+These sounds are built in, so they work without any files:
+rain, wind, waves, fire, drone, static, thunder, knock, footsteps,
+heartbeat, clock, beep, phone, chime, click.
+A file with the same name as a built-in sound is used instead of the built-in one.
+
+
+USING YOUR OWN RECORDINGS
+
+Every time you make a film, the file lines.txt is written next to the script.
+It lists every spoken line with an id, such as L012.
+To use a real recording instead of a made-up voice for a line, save the recording in a
+folder called voice inside the film's folder, named by the line's id, such as voice/L012.wav.
+Then make the film again. Effects, volume and position on that line are still added to the recording.
+The ids follow the order of the lines, so adding a line earlier in the script changes the ids after it.

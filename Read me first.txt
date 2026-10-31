@@ -1,0 +1,58 @@
+THE FILM ENGINE
+
+This folder turns a written script into an audio film. You write who says what,
+and which sounds and music play, in a plain text file. The engine gives every
+character a voice, adds the sounds and music, and saves the finished film as
+an MP3 file you can listen to or share.
+
+
+THE FIRST TIME
+
+Double-click Setup.bat and wait until it says "All done". You only need to do
+this once on each computer.
+
+
+MAKING A FILM, STEP BY STEP
+
+1. Double-click New film.bat and type a name for your film, such as the haunted house.
+   A new folder is made inside the films folder, and its script opens in Notepad.
+2. Write your script and save it. The file "Script guide.txt" explains everything
+   you can write. The starter script shows the basics.
+3. Double-click Make a film.bat and type the film's folder name, such as the-haunted-house.
+   The engine reads the script, makes the voices and mixes everything together.
+4. When it says "Done", type y and press Enter to listen to it.
+5. When you are happy, double-click Save my work.bat. That keeps a copy of your
+   work in the history, so nothing is lost even if a file is changed or deleted by mistake.
+
+The finished film is saved in your film's folder, inside a folder called output.
+Next to it is a timeline file that lists what happens at each minute and second.
+
+
+THE OTHER BUTTONS
+
+Check a script.bat looks for mistakes in a script without making the film. It is quick.
+List voices.bat shows all the voices you can give your characters, in Notepad.
+Try a voice.bat lets you hear a voice saying anything you like, in any style.
+List sounds.bat lists the sounds you can use without any sound files, such as rain and thunder.
+Save my work.bat saves a copy of everything in the history.
+
+
+WHERE THINGS GO
+
+films: one folder for each film. Each has script.txt, and a sounds folder for that film's sound files.
+sounds: sound and music files that every film can use.
+sound-folders.txt: list other folders on the computer that have sounds or music in them,
+such as a music library, and the engine will look there too.
+
+
+WHEN SOMETHING GOES WRONG
+
+If the script has a mistake, the engine tells you the line number and what is wrong,
+and often suggests the right word. Fix the line, save, and try again.
+
+Voices come from Microsoft over the internet, so making a film needs the internet.
+Lines that have been made before are saved, so making the film again is quick and
+only fetches the lines you changed.
+
+If the engine says "Something went wrong inside the engine", that is not your fault.
+Send the file it names to the person who looks after the engine.

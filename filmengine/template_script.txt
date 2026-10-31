@@ -1,0 +1,18 @@
+﻿# Lines that start with a hash sign are notes. The engine ignores them.
+# The full guide to writing scripts is in the file Script guide.txt
+
+Title: {title}
+
+# The cast. Each character gets a voice. Run "List voices" to see them all.
+Narrator = Ryan
+Alex = Jenny
+
+[ambience: rain, fade in 2]
+
+Narrator: It was raining when the story began.
+Alex: Hello? Is anyone there?
+[sound: knock]
+Alex (whisper): Who's knocking?
+
+[pause 1]
+[stop ambience, fade out 3]

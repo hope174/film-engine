@@ -1,0 +1,11 @@
+# Saved speech and other things the engine can make again
+.cache/
+__pycache__/
+*.pyc
+
+# Finished films. They are made again from the script at any time,
+# and big audio files would make the history grow fast.
+films/*/output/
+
+# Made by "List voices"
+voice list.txt
